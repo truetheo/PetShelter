@@ -126,6 +126,23 @@ public class PetProvider extends ContentProvider{
      * for that specific row in the database.
      */
     private Uri insertPet(Uri uri, ContentValues values) {
+        //Check that the name is not null
+        String name = values.getAsString(PetEntry.COLUMN_PET_NAME);
+        if(name == null){
+            throw new IllegalArgumentException("Pet requires a name");
+        }
+        String breed = values.getAsString(PetEntry.COLUMN_PET_BREED);
+        if(breed == null){
+            throw new IllegalArgumentException("Pet requires a breed");
+        }
+        Integer gender = values.getAsInteger(PetEntry.COLUMN_PET_GENDER);
+        if(gender == null || !PetEntry.isValidGender(gender)){
+            throw new IllegalArgumentException("Pet gender is not ok");
+        }
+        Integer weight = values.getAsInteger(PetEntry.COLUMN_PET_WEIGHT);
+        if( weight == null || weight < 0){
+            throw new IllegalArgumentException("Pet needs to have a valid weight");
+        }
         // TODO: Insert a new pet into the pets database table with the given ContentValues
         //Get writable database
         SQLiteDatabase database = mDbHelper.getWritableDatabase();
@@ -146,7 +163,17 @@ public class PetProvider extends ContentProvider{
      */
     @Override
     public int update(Uri uri, ContentValues contentValues, String selection, String[] selectionArgs) {
-        return 0;
+        final int match = sUriMatcher.match(uri);
+        switch (match){
+            case PETS:
+                return updatePet(uri);
+            case PET_ID:
+                selection = PetEntry._ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                return updatePet(uri, contentValues,selection, selectionArgs);
+            default:
+                throw new IllegalArgumentException("Update is not supported for " + uri);
+        }
     }
 
     /**

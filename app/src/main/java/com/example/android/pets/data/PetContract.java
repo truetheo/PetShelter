@@ -9,7 +9,7 @@ import android.provider.BaseColumns;
 
 public final class PetContract {
     //storing an content authority value
-    public static final String CONTENT_AUTHORITY = "com.example.adnroid.pets";
+    public static final String CONTENT_AUTHORITY = "com.example.android.pets";
     //base content uri
     public static final Uri BASE_CONTENT_URI = Uri.parse("content://"+CONTENT_AUTHORITY);
     //path tableName - this will be appended to the base Uri
@@ -35,6 +35,13 @@ public final class PetContract {
         public static final int GENDER_UNKNOWN = 0;
         public static final int GENDER_MALE = 1;
         public static final int GENDER_FEMALE = 2;
+
+        public static boolean isValidGender(int gender){
+            if(gender == GENDER_UNKNOWN || gender == GENDER_FEMALE || gender == GENDER_MALE){
+                return true;
+            }
+            return false;
+        }
     }
 
 
